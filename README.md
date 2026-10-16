@@ -1,4 +1,5 @@
 conda create -n py313 python=3.13
+
 conda activate py313
 
 pip install mcp pywin32 openpyxl
@@ -31,3 +32,26 @@ argument is optional: if no output filename is supplied, the skill generates
 The default output directory is the workspace root, unless the user specifies
 another directory. This naming rule applies to the skill, not direct script
 execution or the Run and Debug configuration.
+
+### Usage examples
+
+You can simply ask in chat using natural language, for example:
+
+```text
+Merge 1.docx and 2.docx.
+```
+
+
+To merge existing files `1.docx` and `2.docx` in the workspace root, enter the following in chat:
+
+```text
+/merge-word-reports input1="1.docx" input2="2.docx"
+```
+
+If `output` is omitted, the skill creates `merge-yyyyMMddHHmm.docx` in the workspace root using the actual local time at execution.
+
+You can also specify the output filename:
+
+```text
+/merge-word-reports input1="1.docx" input2="2.docx" output="combined.docx"
+```
