@@ -5,7 +5,7 @@
             "name": "Merge Word reports",
             "type": "debugpy",
             "request": "launch",
-            "program": "${workspaceFolder}\\merge_word_reports.py",
+            "program": "${workspaceFolder}\\.github\\skills\\merge-word-reports\\merge_word_reports.py",
             "console": "integratedTerminal",
             "cwd": "${workspaceFolder}",
             "args": [

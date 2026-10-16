@@ -17,7 +17,17 @@ Existing output files are overwritten; the output must differ from both inputs.
 Command-line equivalent:
 
 ```powershell
-python .\merge_word_reports.py --input1 "first.docx" --input2 "second.docx" --output "merged.docx"
+python .\.github\skills\merge-word-reports\merge_word_reports.py --input1 "first.docx" --input2 "second.docx" --output "merged.docx"
 ```
 
 Omitting the arguments uses the original report filenames in the script directory.
+
+## Merge skill
+
+The [merge-word-reports skill](.github/skills/merge-word-reports/SKILL.md)
+requires `input1` and `input2` to point to existing Word files. Its `output`
+argument is optional: if no output filename is supplied, the skill generates
+`merge-yyyyMMddHHmm.docx` using the actual local time at invocation.
+The default output directory is the workspace root, unless the user specifies
+another directory. This naming rule applies to the skill, not direct script
+execution or the Run and Debug configuration.
