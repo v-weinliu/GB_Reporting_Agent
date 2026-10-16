@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import argparse
 from pathlib import Path
 import re
 import os
@@ -8,13 +9,9 @@ import win32com.client as win32
 
 
 ROOT = Path(__file__).resolve().parent
-print(ROOT)
 POWERPOINT_REPORT = ROOT / "Microsoft Office 2024 - PowerPoint Win32.docx"
 WORD_REPORT = ROOT / "Microsoft Office 2024 - Word Win32.docx"
 OUTPUT = ROOT / "Microsoft Office 2024 - PowerPoint and Word Win32_combined.docx"
-
-if os.path.exists(OUTPUT):
-    os.remove(OUTPUT)
 
 HEADING_LEVELS = {
     "测试用例": 1,
@@ -243,22 +240,22 @@ def append_test_results(document, outline_template) -> None:
         add_result_table(document, product)
 
 
-def merge_reports() -> None:
+def merge_reports(input1: Path, input2: Path, output: Path) -> None:
     word = win32.gencache.EnsureDispatch(win32.DispatchEx("Word.Application"))
     word.Visible = False
     word.DisplayAlerts = 0
     document = None
     source_document = None
     try:
-        document = word.Documents.Open(str(POWERPOINT_REPORT), False, True)
-        if OUTPUT.exists():
-            raise FileExistsError(f"Output already exists: {OUTPUT}")
-        document.SaveAs2(str(OUTPUT), 16)
+        document = word.Documents.Open(str(input1), False, True)
+        if output.exists():
+            os.remove(OUTPUT)
+        document.SaveAs2(str(output), 16)
         document.TrackRevisions = False
 
         insertion = document.Range(document.Content.End - 1, document.Content.End - 1)
         insertion.InsertBreak(win32.constants.wdSectionBreakNextPage)
-        source_document = word.Documents.Open(str(WORD_REPORT), False, True)
+        source_document = word.Documents.Open(str(input2), False, True)
         append_document_in_chunks(document, source_document)
         source_document.Close(False)
         source_document = None
@@ -277,6 +274,25 @@ def merge_reports() -> None:
         word.Quit()
 
 
+def parse_args() -> argparse.Namespace:
+    parser = argparse.ArgumentParser(description="Merge two Word reports.")
+    parser.add_argument("--input1", type=Path, default=POWERPOINT_REPORT, help="First Word report")
+    parser.add_argument("--input2", type=Path, default=WORD_REPORT, help="Second Word report")
+    parser.add_argument("--output", type=Path, default=OUTPUT, help="Output Word report (overwritten if it exists)")
+    args = parser.parse_args()
+    args.input1 = args.input1.resolve()
+    args.input2 = args.input2.resolve()
+    args.output = args.output.resolve()
+    for path in (args.input1, args.input2):
+        if not path.is_file():
+            parser.error(f"Input file does not exist: {path}")
+    if args.output in (args.input1, args.input2):
+        parser.error("Output must not be the same as either input file.")
+    return args
+
+
 if __name__ == "__main__":
-    merge_reports()
-    print(f"Created: {OUTPUT}")
+    args = parse_args()
+    args.output.unlink(missing_ok=True)
+    merge_reports(args.input1, args.input2, args.output)
+    print(f"Created: {args.output}")

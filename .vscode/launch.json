@@ -1,0 +1,41 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Merge Word reports",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${workspaceFolder}\\merge_word_reports.py",
+            "console": "integratedTerminal",
+            "cwd": "${workspaceFolder}",
+            "args": [
+                "--input1",
+                "${input:input1}",
+                "--input2",
+                "${input:input2}",
+                "--output",
+                "${input:output}"
+            ]
+        }
+    ],
+    "inputs": [
+        {
+            "id": "input1",
+            "type": "promptString",
+            "description": "First Word report path (input1)",
+            "default": "Microsoft Office 2024 - PowerPoint Win32.docx"
+        },
+        {
+            "id": "input2",
+            "type": "promptString",
+            "description": "Second Word report path (input2)",
+            "default": "Microsoft Office 2024 - Word Win32.docx"
+        },
+        {
+            "id": "output",
+            "type": "promptString",
+            "description": "Output Word report path (existing file will be overwritten)",
+            "default": "Microsoft Office 2024 - PowerPoint and Word Win32_combined.docx"
+        }
+    ]
+}
